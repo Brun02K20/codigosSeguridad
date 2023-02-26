@@ -1,6 +1,9 @@
 import React from "react";
 import { Loading } from "../Loading/Loading.js";
 
+// al ser todo mayuscula indicamos que nunca el valor almacenado cambiara, es una convencion nada mas
+const SECURITY_CODE = "paradigma";
+
 class ClassState extends React.Component{
     // recibir propiedades: this.props.propiedadtal
 
@@ -8,8 +11,9 @@ class ClassState extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            error: true,
-            loading: true,
+            error: false,
+            loading: false,
+            value: "",
         };
     }
 
@@ -29,9 +33,16 @@ class ClassState extends React.Component{
         console.log("actualizando");
 
         if(!!this.state.loading){
+            
             setTimeout(() => {
                 console.log("Inicio");
-                this.setState({loading: false}) 
+                
+                if (SECURITY_CODE === this.state.value) {
+                    this.setState({error: false, loading: false});
+                } else {
+                    this.setState({error: true, loading: false});
+                };
+
                 console.log("Fin");
             }, 2000);
         }
@@ -47,16 +58,26 @@ class ClassState extends React.Component{
                 <h2>Delete {this.props.name}</h2>
                 <p>Please write the security code to delete ClassState</p>
 
-                {this.state.error && (<p>ERROR: The security code is incorrect</p>)}
+                {(this.state.error && !this.state.loading ) && (<p>ERROR: The security code is incorrect</p>)}
 
                 {this.state.loading && (<Loading></Loading>)}
 
-                <input placeholder="Security code..." />
+                <input 
+                    placeholder="Security code..." 
+                    value={this.state.value}
+                    onChange={
+                        (evento) => {
+                            this.setState({value: evento.target.value})
+                        }
+                    }
+                />
                 <button
                     onClick={()=>{
                         this.setState({loading: true}) 
                     }}
-                >Comprobar</button>
+                >
+                    Comprobar
+                </button>
             </div>
         );
     }

@@ -10,7 +10,7 @@ class Loading extends React.Component{
     // metodo render: renderiza lo que le metamos dentro
     render(){
         return (
-            <p>HOLAAAAAAAAAA</p>
+            <p>Cargando...</p>
         );
     }
 };
