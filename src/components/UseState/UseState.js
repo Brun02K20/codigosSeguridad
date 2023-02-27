@@ -7,54 +7,62 @@ function UseState({name}){
     // crear un estado en componentes tipos funcion
     // const [state, setState] = React.useState(initialState);
 
-    const [error, setError] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
+    // const [error, setError] = React.useState(false);
+    // const [loading, setLoading] = React.useState(false);
 
-    // creando un estado dinamico que dependa de lo que escriban los usuarios en un input
-    const [value, setValue] = React.useState('');
+    // // creando un estado dinamico que dependa de lo que escriban los usuarios en un input
+    // const [value, setValue] = React.useState('');
+    
+    // creando estado compuesto mediante hooks
+    const [state, setState] = React.useState({
+        value: "",
+        error: false,
+        loading: false,
+    });
 
     // debuggueando el estado de value
-    console.log(value);
-
+    console.log(state);
 
     React.useEffect(()=>{
-        if(!!loading){
-            setError(false);
+        if(!!state.loading){
+            setState({...state, error: false}) //setError(false);
             setTimeout(() => {
                 console.log("Inicio");
 
                 // validando si la palabra ingresada por el usuario es correcta
-                if (value === SECURITY_CODE) {
-                    setLoading(false);
-                } else {
-                    setError(true);
-                    setLoading(false);
+                // este ...state lo que hace es replicar todas las propiedades del objeto state en este nuevo objeto resultante del setState
+                if (state.value === SECURITY_CODE) {
+                    setState({...state, error: false, loading: false});
+                } else { setState({...state, error: true, loading: false});
+                    // setError(true);
+                    // setLoading(false);
                 };
 
-                setLoading(false);
+                // tuve un problema al aplicar esto del estado compuesto y fue que me daba que error siempre era false, la solucion fue eliminar esta linea de codigo:
+                // setState({value: state.value, error: state.error, loading: false}) //setLoading(false);
                 console.log("Fin");
             }, 2000);
         }
-    }, [loading]);
+    }, [state.loading]);
 
     return (
         <div>
             <h2>Delete {name}</h2>
             <p>Please write the security code to delete UseState</p>
 
-            {error && (<p>ERROR: The security code is incorrect</p>)}
+            {(!state.loading && state.error) && (<p>ERROR: The security code is incorrect</p>)}
 
-            {loading && (<p>LOADING...</p>)}
+            {state.loading && (<p>LOADING...</p>)}
 
             {/* nota: el evento que se recibe de parametro es lo que escriba el usuario */}
             <input 
                 placeholder="Security code..." 
-                value={value} 
-                onChange={(evento) => {setValue(evento.target.value)}}
+                value={state.value} 
+                onChange={(evento) => {setState({...state, value: evento.target.value})}}
             />
             
             <button
-                onClick={()=>{setLoading(true)}}
+                onClick={()=>{setState({...state, loading: true})}}
             >
                 Comprobar
             </button>
