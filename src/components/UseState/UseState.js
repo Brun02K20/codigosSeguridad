@@ -18,6 +18,8 @@ function UseState({name}){
         value: "",
         error: false,
         loading: false,
+        deleted: false, // cambios de pantalla
+        confirmation: false,
     });
 
     // debuggueando el estado de value
@@ -32,7 +34,7 @@ function UseState({name}){
                 // validando si la palabra ingresada por el usuario es correcta
                 // este ...state lo que hace es replicar todas las propiedades del objeto state en este nuevo objeto resultante del setState
                 if (state.value === SECURITY_CODE) {
-                    setState({...state, error: false, loading: false});
+                    setState({...state, error: false, loading: false, confirmation: true});
                 } else { setState({...state, error: true, loading: false});
                     // setError(true);
                     // setLoading(false);
@@ -45,29 +47,83 @@ function UseState({name}){
         }
     }, [state.loading]);
 
-    return (
-        <div>
-            <h2>Delete {name}</h2>
-            <p>Please write the security code to delete UseState</p>
+    
 
-            {(!state.loading && state.error) && (<p>ERROR: The security code is incorrect</p>)}
+    if (!state.deleted && !state.confirmation) {
+        return (
+            <div>
+                <h2>Delete {name}</h2>
+                <p>Please write the security code to delete UseState</p>
+    
+                {(!state.loading && state.error) && (<p>ERROR: The security code is incorrect</p>)}
+    
+                {state.loading && (<p>LOADING...</p>)}
+    
+                {/* nota: el evento que se recibe de parametro es lo que escriba el usuario */}
+                <input 
+                    placeholder="Security code..." 
+                    value={state.value} 
+                    onChange={(evento) => {setState({...state, value: evento.target.value})}}
+                />
+                
+                <button
+                    onClick={()=>{setState({...state, loading: true})}}
+                >
+                    Comprobar
+                </button>
+            </div>
+        );
+    } else if (!!state.confirmation && !state.deleted) {
+        return (
+            <React.Fragment>
+                <p>Are you sure you want to delete: {name}?</p>
+                <button
+                    onClick={() => {
+                        setState(
+                            {
+                                ...state, 
+                                deleted: true
+                            }
+                        );
+                    }}
+                >
+                    Yes, I'm sure
+                </button>
 
-            {state.loading && (<p>LOADING...</p>)}
-
-            {/* nota: el evento que se recibe de parametro es lo que escriba el usuario */}
-            <input 
-                placeholder="Security code..." 
-                value={state.value} 
-                onChange={(evento) => {setState({...state, value: evento.target.value})}}
-            />
-            
-            <button
-                onClick={()=>{setState({...state, loading: true})}}
-            >
-                Comprobar
-            </button>
-        </div>
-    );
+                <button
+                    onClick={() => {
+                        setState(
+                            {
+                                ...state, 
+                                confirmation: false,
+                                value: "",   
+                            }
+                        );
+                    }}
+                >
+                    No, I want to return
+                </button>
+            </React.Fragment>
+        );
+    } else {
+        return (
+            <React.Fragment>
+                <h2>{name} was successfully removed</h2>
+                <button
+                    onClick={() => {
+                        setState({
+                            ...state, 
+                            deleted:false, 
+                            confirmation: false, 
+                            value: "",
+                        });
+                    }}
+                >
+                    Recover {name}
+                </button>
+            </React.Fragment>
+        );
+    };
 };
 
 export {UseState};

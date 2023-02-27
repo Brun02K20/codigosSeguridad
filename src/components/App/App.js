@@ -9,6 +9,7 @@ function App() {
   return (
     <div className="App">
       <UseState name="Use State" />
+      <br></br>
       <ClassState name="Class State" />
     </div>
   );
