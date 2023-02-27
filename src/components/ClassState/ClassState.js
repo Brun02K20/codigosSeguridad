@@ -4,6 +4,7 @@ import { Loading } from "../Loading/Loading.js";
 // al ser todo mayuscula indicamos que nunca el valor almacenado cambiara, es una convencion nada mas
 const SECURITY_CODE = "paradigma";
 
+// creamos el componente mediante clases
 class ClassState extends React.Component{
     // recibir propiedades: this.props.propiedadtal
 
@@ -29,27 +30,23 @@ class ClassState extends React.Component{
     //     console.log("componentDidMount")
     // }
 
+    // si se actualiza el estado que haga lo que le metamos dentro
     componentDidUpdate(){
         console.log("actualizando");
-
         if(!!this.state.loading){
             
+            // simulando llamado a API
             setTimeout(() => {
                 console.log("Inicio");
-                
                 if (SECURITY_CODE === this.state.value) {
                     this.setState({error: false, loading: false});
                 } else {
                     this.setState({error: true, loading: false});
                 };
-
                 console.log("Fin");
             }, 2000);
         }
     }
-
-
-
 
     // metodo render: renderiza lo que le metamos dentro
     render(){
@@ -76,7 +73,7 @@ class ClassState extends React.Component{
                         this.setState({loading: true}) 
                     }}
                 >
-                    Comprobar
+                    Check
                 </button>
             </div>
         );

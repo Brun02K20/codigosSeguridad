@@ -5,8 +5,7 @@ class Loading extends React.Component{
     componentWillUnmount() {
         console.log("componentWillUnmount")
     }
-
-
+    
     // metodo render: renderiza lo que le metamos dentro
     render(){
         return (
