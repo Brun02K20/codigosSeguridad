@@ -11,6 +11,40 @@ function UseReducer({name}){
     // debuggueando el estado
     console.log(state);
 
+    // estos son los action creators
+    // estado de confirmacion
+    const onConfirm = () => {
+        dispatch({type: actionTypes.confirm});
+    };
+
+    // estado de error
+    const onError = () => {
+        dispatch({type: actionTypes.error});
+    };
+
+    // estado dinamico del valor del input
+    const onWrite = (newValue) => {
+        dispatch({type: actionTypes.write, payload: newValue});
+    };
+
+    // otra forma de hacer el onwrite (ver lineas 78 a 85):
+    // const onWrite = (evento) => {dispatch({type: actionTypes.write, payload: evento.target.value});}
+
+    // estado de comprobacion de que el codigo ingresado por el usuairo es correcto o no
+    const onCheck = () => {
+        dispatch({type: actionTypes.check});
+    };
+
+    // estado de borrado
+    const onDelete = () => {
+        dispatch({type: actionTypes.delete});
+    };
+
+    // estado de reseteo/recuperacion
+    const onReset = () => {
+        dispatch({type: actionTypes.reset});
+    };
+
     // aca estamos simulando el llamado a una API
     React.useEffect(()=>{
         if(!!state.loading){
@@ -20,8 +54,8 @@ function UseReducer({name}){
                 // validando si la palabra ingresada por el usuario es correcta
                 // este ...state lo que hace es replicar todas las propiedades del objeto state en este nuevo objeto resultante del setState
                 if (state.value === SECURITY_CODE) {
-                    dispatch({type: "CONFIRM",});
-                } else { dispatch({type: "ERROR",}); };
+                    onConfirm();
+                } else { onError();};
 
                 // tuve un problema al aplicar esto del estado compuesto y fue que me daba que error siempre era false, la solucion fue eliminar esta linea de codigo:
                 // setState({value: state.value, error: state.error, loading: false}) //setLoading(false);
@@ -42,17 +76,17 @@ function UseReducer({name}){
                 {state.loading && (<p>LOADING...</p>)}
     
                 {/* nota: el evento que se recibe de parametro es lo que escriba el usuario */}
+                {/* Otra forma de hacer el onChange era: onChange={onWrite}, funcaba igual */}
                 <input 
                     placeholder="Security code..." 
                     value={state.value} 
                     onChange={(evento) => {
-                        dispatch({type: "WRITE", payload: evento.target.value });
-                        // onWrite(evento.target.value); De alguna forma le tenemos que enviar el evento.target.value, que es lo que hayan escrito los usuarios, esto se enviara como un PAYLOAD. En el payload se guarda lo que le enviemos al reducer para que se actualice el estado: puede ser un objeto, un string, una variable, etc
+                        onWrite(evento.target.value);
                     }}
                 />
                 
                 <button
-                    onClick={()=>{dispatch({type: "CHECK"});}}
+                    onClick={onCheck}
                 >
                     Check
                 </button>
@@ -63,13 +97,13 @@ function UseReducer({name}){
             <React.Fragment>
                 <p>Are you sure you want to delete: {name}?</p>
                 <button
-                    onClick={() => {dispatch({type: "DELETE"});}}
+                    onClick={onDelete}
                 >
                     Yes, I'm sure
                 </button>
 
                 <button 
-                    onClick={() => {dispatch({type: "RESET"});}}
+                    onClick={onReset}
                 >
                     No, I want to return
                 </button>
@@ -80,7 +114,7 @@ function UseReducer({name}){
             <React.Fragment>
                 <h2>{name} was successfully removed</h2>
                 <button
-                    onClick={() => {dispatch({type: "RESET"});}}
+                    onClick={onReset}
                 >
                     Recover {name}
                 </button>
@@ -153,15 +187,26 @@ const initialState = {
 
 // retornando un objeto de forma implicita
 
+
+// clase 15, creando un actionType
+const actionTypes = {
+    confirm: "CONFIRM",
+    error: "ERROR",
+    check: "CHECK",
+    delete: "DELETE",
+    reset: "RESET",
+    write: "WRITE"
+}; 
+
+
 // aca retornamos un objeto con todos los posibles estados (que tbn son objetos)
 const reducerObject = (state, payload) => ({
-    "ERROR": {...state, error: true, loading: false},
-    "CHECK": {...state, loading: true},
-    "CONFIRM": {...state, error: false, loading: false, confirmation: true},
-    "DELETE": {...state, deleted: true},
-    "RESET": {...state, deleted:false, confirmation: false, value: "",},
-    "WRITE": {...state, value: payload},
-
+    [actionTypes.error]: {...state, error: true, loading: false},
+    [actionTypes.check]: {...state, loading: true},
+    [actionTypes.confirm]: {...state, error: false, loading: false, confirmation: true},
+    [actionTypes.delete]: {...state, deleted: true},
+    [actionTypes.reset]: {...state, deleted:false, confirmation: false, value: "",},
+    [actionTypes.write]: {...state, value: payload},
 });
 
 // usaremos esta funcion para elegir el estado que tenga = nombre que el action type, que estemos enviando desde la actualizacion del estado en nuestro componente
