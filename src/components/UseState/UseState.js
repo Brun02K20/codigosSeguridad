@@ -28,6 +28,8 @@ function UseState({name}){
 
     // aca crearemos la funcion que especificara el paso a paso de actualizaciones de estado, haciendo el codigo un poco mas declarativo
 
+    // estos son los diferentes posibles estados compuestos
+
     // estado de confirmacion
     const onConfirm = () => {
         setState({...state, error: false, loading: false, confirmation: true});
